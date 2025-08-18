@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chosen Palette: Professional & Trustworthy -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive decision-support tool. Instead of a static report, it guides clinicians through a step-by-step process (selecting drug, procedure, patient risk) to receive a specific, actionable recommendation. This task-oriented structure is more usable in a clinical setting than a linear document. It's supplemented by a summary section with charts and tables for broader learning. -->
+    <!-- Visualization & Content Choices: 1. Interactive Form (HTML/JS): Goal: Provide specific guidance. Method: User selects options, JS logic provides a dynamic text result. Justification: Directly answers the user's primary need. 2. Bar Chart (Chart.js): Goal: Compare drug stoppage times. Justification: Visually contrasts Warfarin vs. DOACs. 3. Flowchart (HTML/CSS): Goal: Organize a decision pathway (e.g., DAPT). Justification: Intuitive visual for a process. 4. Tables (HTML): Goal: Inform on risk categories. Justification: Best for structured data. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title> 항혈전제 관리 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 350px;
+            }
+        }
+        .result-card {
+            background-color: #eef2ff;
+            border-left: 5px solid #4f46e5;
+        }
+        .flow-node {
+            border: 2px solid #9ca3af;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .flow-arrow {
+            color: #6b7280;
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <header class="bg-slate-800 text-white text-center py-8 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-bold">소화기 내시경 전후후 항혈전제 관리</h1>
+            <p class="mt-2 text-lg text-slate-300">최신 가이드라인 기반 Decision app</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="interactive-tool" class="mb-16">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2 text-center">맞춤 관리법 찾기</h2>
+                <p class="text-slate-600 mb-8 text-center">** 혈전 고위험 환자는 consult 필요한 경우가 많으니 주의</p>
+                
+                <form id="guideline-form" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label for="drug" class="block text-lg font-semibold text-slate-700 mb-2">1. 복용 약물</label>
+                        <select id="drug" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="asa">아스피린 (단독)</option>
+                            <option value="p2y12">P2Y12 억제제 (단독)</option>
+                            <option value="dapt">DAPT (아스피린 + P2Y12)</option>
+                            <option value="warfarin">와파린</option>
+                            <option value="doac">DOACs</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="procedure" class="block text-lg font-semibold text-slate-700 mb-2">2. 내시경 시술</label>
+                        <select id="procedure" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="low">진단 내시경 (생검 포함)</option>
+                            <option value="low">1cm 미만 용종절제술</option>
+                            <option value="low">괄약근 절개술 없는 ERCP</option>
+                            <option value="high">1cm 이상 용종절제술</option>
+                            <option value="high">괄약근 절개술 동반 ERCP</option>
+                            <option value="high">EMR (내시경 점막 절제술)</option>
+                            <option value="ultra-high">ESD (내시경 점막하 박리술)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="thrombotic-risk" class="block text-lg font-semibold text-slate-700 mb-2">3. 혈전 위험도</label>
+                        <select id="thrombotic-risk" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="low">저위험</option>
+                            <option value="high">고위험 (기계식 판막, 최근 스텐트 등)</option>
+                        </select>
+                    </div>
+                </form>
+
+                <div id="result-display" class="mt-8 p-6 rounded-lg result-card transition-all duration-300">
+                    <h3 class="text-2xl font-bold text-indigo-800 mb-3">권고 사항</h3>
+                    <p id="recommendation-text" class="text-slate-700 text-lg">위 항목을 선택하시면 여기에 맞춤형 권고안이 표시됩니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="summary" class="mb-16">
+            <h2 class="text-3xl font-bold text-slate-900 mb-8 text-center">주요 지침 요약 및 시각화</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <h3 class="text-2xl font-semibold text-slate-800 mb-4 text-center">고위험 시술 전 약물 중단 기간</h3>
+                    <p class="text-center text-slate-500 mb-4">주요 항혈전제의 일반적인 시술 전 중단 기간 비교</p>
+                    <div class="chart-container h-80">
+                        <canvas id="stoppage-chart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <h3 class="text-2xl font-semibold text-slate-800 mb-4 text-center">DAPT 환자 관리 흐름 (고위험 시술)</h3>
+                    <p class="text-center text-slate-500 mb-4">이중 항혈소판 요법(DAPT) 환자의 일반적인 관리 절차</p>
+                    <div class="flex flex-col items-center mt-6">
+                        <div class="flow-node w-3/4">환자: DAPT 복용 중<br>(아스피린 + P2Y12 억제제)</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-node w-3/4">시술 5-7일 전: P2Y12 억제제 중단</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-node w-3/4">시술 기간: 아스피린은 지속</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-node w-3/4">시술 후: 지혈 확인 후 P2Y12 억제제 신속히 재개</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion" class="text-center">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">핵심 원칙: 개별화와 협력</h2>
+            <p class="max-w-3xl mx-auto text-slate-600 text-lg">
+                본 가이드는 최신 지침을 기반으로 하지만, 모든 환자에게 일괄 적용할 수는 없습니다. 출혈과 혈전 위험 사이의 최적의 균형을 찾기 위해서는 환자 개개인의 상태를 고려한 맞춤형 접근과, 필요시 심장내과/신경과 전문의와의 긴밀한 다학제적 협력이 필수적입니다.
+            </p>
+            <p class="text-sm text-slate-400 mt-8">
+                <strong>면책 조항:</strong> 이 애플리케이션은 정보 제공 및 교육 목적으로 제작되었으며, 실제 임상적 의사결정을 대체할 수 없습니다. 최종적인 치료 계획은 반드시 담당 의료진의 전문적인 판단에 따라야 합니다.
+            </p>
+        </section>
+
+    </main>
+
+    <script>
+        const form = document.getElementById('guideline-form');
+        const recommendationText = document.getElementById('recommendation-text');
+
+        const guidelines = {
+            asa: {
+                low: "아스피린을 지속합니다. 시술 후에도 계속 복용하세요.",
+                high: "아스피린을 지속하는 것이 원칙입니다. 출혈 위험이 매우 높은 시술이 아니라면 중단하지 마세요.",
+                'ultra-high': "초고위험 시술입니다. 출혈 위험이 혈전 위험보다 높다고 판단될 경우, 심장/신경과 전문의와 상의하여 일시적 중단을 고려할 수 있습니다."
+            },
+            p2y12: {
+                low: "P2Y12 억제제를 지속합니다.",
+                high: "시술 5-7일 전 P2Y12 억제제를 중단합니다. 시술 후 지혈이 확인되면 가능한 한 빨리 재개하세요.",
+                'ultra-high': "시술 5-7일 전 P2Y12 억제제를 중단합니다. 시술 후 지혈이 확인되면 가능한 한 빨리 재개하세요."
+            },
+            dapt: {
+                low: "아스피린과 P2Y12 억제제를 모두 지속하는 것을 고려합니다.",
+                high: "아스피린은 지속하고, P2Y12 억제제만 시술 5-7일 전에 중단합니다. 시술 후 P2Y12 억제제를 신속히 재개하세요.",
+                'ultra-high': "초고위험 시술입니다. 아스피린은 지속하고 P2Y12 억제제는 5-7일 전 중단하는 것이 원칙이나, 출혈 위험이 매우 높을 경우 심장/신경과 전문의와 상의하여 두 약제 모두의 단기 중단을 고려할 수 있습니다."
+            },
+            warfarin: {
+                low: {
+                    low: "INR이 치료 범위 내에 있다면 와파린을 지속합니다.",
+                    high: "INR이 치료 범위 내에 있다면 와파린을 지속합니다."
+                },
+                high: {
+                    low: "시술 5일 전 와파린을 중단합니다. 시술 전 INR < 1.5를 확인하세요.",
+                    high: "고혈전 위험군입니다. 시술 5일 전 와파린을 중단하고, LMWH 브리징 요법이 필요합니다. 반드시 전문가와 상의하세요."
+                },
+                'ultra-high': {
+                    low: "시술 5일 전 와파린을 중단합니다. 시술 전 INR < 1.5를 확인하세요.",
+                    high: "고혈전 위험군입니다. 시술 5일 전 와파린을 중단하고, LMWH 브리징 요법이 필요합니다. 반드시 전문가와 상의하세요."
+                }
+            },
+            doac: {
+                low: "시술 당일 아침 DOAC 복용을 생략하는 것을 고려합니다.",
+                high: "시술 48시간 이상 전에 DOAC를 중단합니다. 신기능 저하 시 중단 기간 연장이 필요할 수 있습니다. 헤파린 브리징은 권장되지 않습니다.",
+                'ultra-high': "시술 48시간 이상 전에 DOAC를 중단합니다. 신기능 저하 시 중단 기간 연장이 필요할 수 있습니다. 헤파린 브리징은 권장되지 않습니다."
+            }
+        };
+
+        function updateRecommendation() {
+            const drug = document.getElementById('drug').value;
+            const procedureRisk = document.getElementById('procedure').value;
+            const thromboticRisk = document.getElementById('thrombotic-risk').value;
+
+            let recommendation = "정보를 가져오는 중...";
+
+            if (drug === 'warfarin') {
+                recommendation = guidelines[drug][procedureRisk][thromboticRisk];
+            } else if (drug === 'doac' || drug === 'asa' || drug === 'p2y12') {
+                 recommendation = guidelines[drug][procedureRisk];
+            } else if (drug === 'dapt') {
+                recommendation = guidelines[drug][procedureRisk];
+            }
+            
+            recommendationText.textContent = recommendation || "선택된 조합에 대한 명확한 지침이 없습니다. 전문가와 상의가 필요합니다.";
+        }
+
+        form.addEventListener('change', updateRecommendation);
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            updateRecommendation();
+
+            const stoppageCtx = document.getElementById('stoppage-chart').getContext('2d');
+            new Chart(stoppageCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['와파린', 'DOACs', '클로피도그렐'],
+                    datasets: [{
+                        label: '일반적 중단 기간 (일)',
+                        data: [5, 2, 5],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(249, 115, 22, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(249, 115, 22, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '시술 전 중단 기간 (일)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return tooltipItems[0].label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
