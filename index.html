@@ -211,7 +211,7 @@
 
             if (drug === 'warfarin') {
                 recommendation = guidelines[drug][procedureRisk][thromboticRisk];
-            } else if (drug === 'doac' || drug === 'asa' || drug === 'p2y12') {
+            } else if (drug === 'doac' || drug === 'asa' || drug === 'cilo' || drug === 'p2y12') {
                  recommendation = guidelines[drug][procedureRisk];
             } else if (drug === 'dapt') {
                 recommendation = guidelines[drug][procedureRisk];
@@ -277,6 +277,7 @@
     </script>
 </body>
 </html>
+
 
 
 
