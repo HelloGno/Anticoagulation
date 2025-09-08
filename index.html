@@ -73,6 +73,7 @@
                         <label for="drug" class="block text-lg font-semibold text-slate-700 mb-2">1. 복용 약물</label>
                         <select id="drug" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                             <option value="asa">아스피린 (단독)</option>
+                            <option value="cilo">Cilostazol</option>
                             <option value="p2y12">P2Y12 억제제 (단독)</option>
                             <option value="dapt">DAPT (아스피린 + P2Y12)</option>
                             <option value="warfarin">와파린</option>
@@ -164,6 +165,11 @@
                 low: "아스피린을 지속합니다. 시술 후에도 계속 복용하세요.",
                 high: "아스피린을 지속하는 것이 원칙입니다. 출혈 위험이 매우 높은 시술이 아니라면 중단하지 마세요.",
                 'ultra-high': "초고위험 시술입니다. 가능한 아스피린을 유지하되, 출혈 위험이 혈전 위험보다 높다고 판단될 경우 심장/신경과 전문의와 상의하여 일시적 중단을 고려할 수 있습니다."
+            },
+            cilo: {
+                low: "cilostazol을 지속합니다. 시술 후에도 계속 복용하세요.",
+                high: "cilostazol을 지속하는 것이 원칙입니다. 출혈 위험이 매우 높은 시술이라면 2일 가량 중단 고려할 수 있습니다.",
+                'ultra-high': "초고위험 시술입니다. 가능한 cilostazol을 유지하되, 필요시 2일 가량 일시적 중단을 고려할 수 있습니다."
             },
             p2y12: {
                 low: "P2Y12 억제제를 지속합니다.",
@@ -271,6 +277,7 @@
     </script>
 </body>
 </html>
+
 
 
 
