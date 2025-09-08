@@ -66,7 +66,7 @@
         <section id="interactive-tool" class="mb-16">
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl">
                 <h2 class="text-3xl font-bold text-slate-900 mb-2 text-center">맞춤 관리법 찾기</h2>
-                <p class="text-slate-600 mb-8 text-center">** 혈전 고위험 환자는 consult 필요한 경우가 많으니 주의</p>
+                <p class="text-slate-600 mb-8 text-center">** 혈전 고위험 환자는 consult 후 진행</p>
                 
                 <form id="guideline-form" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
@@ -90,8 +90,9 @@
                             <option value="high">EUS with FNA</option>
                             <option value="high">ERCP with EST</option>
                             <option value="high">PEG 삽입술(최초)</option>
+                            <option value="high">Dilation of strictures</option>
                             <option value="high">EVL, EVO</option>
-                            <option value="high">EMR (내시경 점막 절제술)</option>
+                            <option value="ultra-high">EMR of large polyp (>2cm)</option>
                             <option value="ultra-high">ESD (내시경 점막하 박리술)</option>
                             <option value="ultra-high">Endoscopic papillectomy</option>
                         </select>
@@ -101,6 +102,8 @@
                         <select id="thrombotic-risk" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                             <option value="low">저위험</option>
                             <option value="high">고위험 (1년 내 PCI d/t ACS) </option>
+                            <option value="high">고위험 (1년 내 PCI with previous stent thrombosis Hx) </option>
+                            <option value="high">고위험 (1년 내 PCI with CHF or CKF, DM Hx) </option>
                             <option value="high">고위험 (기계판막, AF, VTE 환자 중 3개월 내 Stroke hx 있는 자) </option>
                             <option value="high">고위험 (AF환자 중 CHAD-VASc 6점 이상인 자) </option>
                         </select>
@@ -164,12 +167,12 @@
             },
             p2y12: {
                 low: "P2Y12 억제제를 지속합니다.",
-                high: "시술 5-7일 전 P2Y12 억제제를 중단합니다. 시술 후 지혈이 확인되면 가능한 한 빨리 재개하되, 최대 1-2일 내 재개하세요.",
-                'ultra-high': "시술 5-7일 전 P2Y12 억제제를 중단합니다. 시술 후 지혈이 확인되면 가능한 한 빨리 재개하세요. 최대 5일 내에 재개하는 것이 권고됩니다."
+                high: "시술 5-7일 전 P2Y12 억제제를 중단합니다(Plavix, Ticagrelor 5일 / Prasugrel 7일). 시술 후 지혈이 확인되면 가능한 한 빨리 재개하되, 최대 1-2일 내 재개하세요.",
+                'ultra-high': "시술 5-7일 전 P2Y12 억제제를 중단합니다. 충분한 예방적 지혈술이 권장되며, 시술 후 지혈 확인되면 가능한 한 빨리 재개하세요. 최대 5일 내에 재개하는 것이 권고됩니다."
             },
             dapt: {
                 low: "아스피린과 P2Y12 억제제를 모두 지속하는 것을 고려합니다.",
-                high: "아스피린은 지속하고, P2Y12 억제제만 시술 5-7일 전에 중단합니다. 시술 후 P2Y12 억제제를 신속히 재개하세요.",
+                high: "아스피린은 지속하고, P2Y12 억제제만 시술 5-7일 전에 중단합니다(Plavix, Ticagrelor 5일 / Prasugrel 7일). 시술 후 지혈이 확인되면 가능한 한 빨리 재개하되, 가능한 1-2일 내 재개하세요.",
                 'ultra-high': "초고위험 시술입니다. 아스피린은 지속하고 P2Y12 억제제는 5-7일 전 중단하는 것이 원칙이나, 출혈 위험이 매우 높을 경우 심장/신경과 전문의와 상의하여 두 약제 모두의 단기 중단을 고려할 수 있습니다. 최대 5일 내에 재개하는 것이 권고됩니다."
             },
             warfarin: {
@@ -178,18 +181,18 @@
                     high: "INR이 치료 범위 내에 있다면 와파린을 지속합니다."
                 },
                 high: {
-                    low: "시술 5일 전 와파린을 중단합니다. 시술 전 INR < 1.5를 확인하세요. 지혈 확인시 가능한 빨리 재개합니다. 작용 시간 고려했을 때 빨리 재개하는 편이 좋습니다.",
-                    high: "고혈전 위험군입니다. 시술 5일 전 와파린을 중단하고, LMWH 브리징 요법이 필요합니다. 반드시 전문가와 상의하세요. 작용 시간 고려했을 때 빨리 재개하는 편이 좋습니다."
+                    low: "시술 5일 전 와파린을 중단합니다. 시술 전 INR < 1.5를 확인하세요. 지혈 확인시 가능한 빨리 재개합니다. 작용 시간 고려했을 때 당일 재개가 권장되나, 중단 최대 5일을 넘기지 않는 것이 좋습니다.",
+                    high: "고혈전 위험군입니다. 시술 5일 전 와파린을 중단하고, 3일 전부터 LMWH 브리징 요법이 필요합니다. 반드시 전문가와 상의하세요. 시술 후 당일 재개 및 다음날 LWMH 투약이 권장되며, 중단 최대 5일을 넘기지 않는 것이 좋습니다."
                 },
                 'ultra-high': {
-                    low: "시술 5일 전 와파린을 중단합니다. 시술 전 INR < 1.5를 확인하세요. 지혈 확인시 가능한 빨리 재개합니다. 작용 시간 고려했을 때 빨리 재개하는 편이 좋습니다.",
-                    high: "고혈전 위험군입니다. 시술 5일 전 와파린을 중단하고, LMWH 브리징 요법이 필요합니다. 반드시 전문가와 상의하세요."
+                    low: "시술 5일 전 와파린을 중단합니다. 시술 전 INR < 1.5를 확인하세요. 지혈 확인시 가능한 빨리 재개합니다. 작용 시간 고려했을 때 당일 재개가 권장되나, 중단 최대 5일을 넘기지 않는 것이 좋습니다.",
+                    high: "고혈전 위험군입니다. 시술 5일 전 와파린을 중단하고, 3일 전부터 LMWH 브리징 요법이 필요합니다. 반드시 전문가와 상의하세요. 시술 후 당일 재개 및 다음날 LWMH 투약이 권장되며, 중단 최대 5일을 넘기지 않는 것이 좋습니다."
                 }
             },
             doac: {
-                low: "시술 당일 아침 DOAC 복용을 생략하는 것을 고려합니다. 당일 저녁이나 시술 다음날 재개합니다.",
-                high: "시술 48시간 이상 전에 DOAC를 중단합니다. 신기능 저하 시 중단 기간 연장이 필요할 수 있습니다. 지혈 확인 시 1-2일 이후 재개합니다",
-                'ultra-high': "시술 48시간 이상 전에 DOAC를 중단합니다. 신기능 저하 시 중단 기간 연장이 필요할 수 있습니다. 지혈 확인 시 1-2일 이후 재개합니다. 상황에 따라 최대 7일까지 중단할 수 있지만, 주의가 필요합니다."
+                low: "시술 당일 아침 DOAC 복용을 생략합니다. 당일 저녁이나 시술 다음날 재개합니다.",
+                high: "시술 2일 전부터 DOAC를 중단합니다. 신기능 저하 시 중단 기간 연장이 필요할 수 있습니다. 지혈 확인 시 2-3일 이후 재개합니다",
+                'ultra-high': "시술 48시간 이상 전에 DOAC를 중단합니다. 신기능 저하 시 중단 기간 연장이 필요할 수 있습니다. 지혈 확인 시 2-3일 이후 재개합니다. 상황에 따라 최대 7일까지 중단할 수 있지만, 주의가 필요합니다."
             }
         };
 
@@ -268,6 +271,7 @@
     </script>
 </body>
 </html>
+
 
 
 
